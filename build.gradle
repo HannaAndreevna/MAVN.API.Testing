@@ -1,0 +1,98 @@
+plugins {
+    id "io.franzbecker.gradle-lombok" version "3.2.0"
+    id 'io.qameta.allure' version '2.8.1'
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+}
+
+allure {
+    autoconfigure = true
+    aspectjweaver = true
+    version = '2.13.0'
+    configuration = 'compile'
+    aspectjVersion = '1.9.1'
+
+    useJUnit5 {
+        version = '2.13.0'
+    }
+}
+
+group = 'com.lykke.api.testing'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+wrapper.gradleVersion = '5.6.4'
+
+if (project.hasProperty('projVersion')) {
+    project.version = project.projVersion
+} else {
+    project.version = '1.0'
+}
+
+task buildJar(type: Jar) {
+    group 'Build'
+    description 'Creates lykke.api.testing-X.X.jar'
+    manifest {
+        attributes 'Implementation-Title': 'Lykke API Testing',
+                'Implementation-Version': '1.0'
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+repositories {
+    // mavenCentral()
+    jcenter()
+}
+
+ext {
+    versions = [
+            junit_jupiter   : '5.5.2',
+            jackson_core    : '2.10.0',
+            jackson_databind: '2.10.0',
+            jackson_datatype: '2.10.0'
+            //,
+            //web3j           : '4.5.5'
+    ]
+}
+
+dependencies {
+    implementation "org.junit.jupiter:junit-jupiter-api:${versions.junit_jupiter}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit_jupiter}"
+    compile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: "${versions.junit_jupiter}"
+
+    compile group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
+    compile group: 'org.awaitility', name: 'awaitility', version: '3.1.6'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${versions.jackson_databind}"
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${versions.jackson_core}"
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: "${versions.jackson_core}"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: "${versions.jackson_core}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: "${versions.jackson_datatype}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: "${versions.jackson_datatype}"
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: "${versions.jackson_datatype}"
+    
+    compile group: 'io.rest-assured', name: 'rest-assured', version: '4.1.2'
+    compile group: 'io.qameta.allure', name: 'allure-rest-assured', version: '2.13.0'
+
+    compile group: 'org.apache.commons', name: 'commons-text', version: '1.8'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+    compile group: 'ru.yandex.qatools.ashot', name: 'ashot', version: '1.5.4'
+    compile group: 'cglib', name: 'cglib-nodep', version: '2.2'
+
+    compile group: 'com.github.javafaker', name: 'javafaker', version: '1.0.1'
+    compile 'com.rabbitmq:amqp-client:5.7.1'
+
+ //   compile "org.web3j:core:${versions.web3j}"
+ //   compile "org.web3j:crypto:${versions.web3j}"
+  //  compile "org.web3j:utils:${versions.web3j}"
+}
